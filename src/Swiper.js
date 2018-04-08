@@ -7,7 +7,7 @@ import {
   PanResponder,
   Dimensions,
   Platform,
-  BackAndroid,
+  BackHandler,
 } from 'react-native';
 import clamp from 'clamp';
 
@@ -180,7 +180,7 @@ export default class SwiperAnimated extends PureComponent {
     this.animateEntrance();
 
     if (Platform.OS === 'android' && this.props.backPressToBack) {
-      BackAndroid.addEventListener('hardwareBackPress', this.handleBackPress);
+      BackHandler.addEventListener('hardwareBackPress', this.handleBackPress);
     }
     this.pan.x.addListener(({ value }) => { this.valueX = value; });
     this.pan.y.addListener(({ value }) => { this.valueY = value; });
@@ -189,7 +189,7 @@ export default class SwiperAnimated extends PureComponent {
   componentWillUnmount() {
     this.isComponentMounted = false;
     if (Platform.OS === 'android' && this.props.backPressToBack) {
-      BackAndroid.removeEventListener('hardwareBackPress', this.handleBackPress);
+      BackHandler.removeEventListener('hardwareBackPress', this.handleBackPress);
     }
     this.pan.x.removeAllListeners();
     this.pan.y.removeAllListeners();
@@ -408,12 +408,12 @@ export default class SwiperAnimated extends PureComponent {
     this.animateEntrance();
   }
 
-  forceLeftSwipe = () => {
+  forceLeftSwipe = (handleDirection = true) => {
     this.cardAnimation = Animated.timing(this.pan, {
       toValue: { x: -500, y: 0 },
     }).start((status) => {
       this.resetState();
-      if (status.finished) this.handleDirection(false);
+      if (status.finished) this.handleDirection(handleDirection);
 
       this.cardAnimation = null;
     });
@@ -436,7 +436,7 @@ export default class SwiperAnimated extends PureComponent {
     if (this.currentIndex[this.guid] === 0) {
       this.props.onFirstBackPressed();
     } else {
-      this.forceLeftSwipe();
+      this.forceLeftSwipe(false);
     }
 
     return true;
@@ -655,6 +655,7 @@ export default class SwiperAnimated extends PureComponent {
   }
 
   render() {
+    console.log('!!!!!!!!!!')
     const { stack, showToolbar, style: propStyle, showPagination } = this.props;
 
     return (
