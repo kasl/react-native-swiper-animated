@@ -655,7 +655,6 @@ export default class SwiperAnimated extends PureComponent {
   }
 
   render() {
-    console.log('!!!!!!!!!!')
     const { stack, showToolbar, style: propStyle, showPagination } = this.props;
 
     return (
